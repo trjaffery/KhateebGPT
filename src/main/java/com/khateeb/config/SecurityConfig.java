@@ -27,20 +27,21 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-        @Autowired
-        @Lazy
-        private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(AbstractHttpConfigurer::disable) // NEED TO CHANGE FOR PRODUCTION
+                                .csrf(AbstractHttpConfigurer::disable) // Update for production: Use CSRF token
+                                                                       // protection
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/", "/home").permitAll()
+                                                .requestMatchers("/", "/home", "/user", "/oauth2/callback").permitAll() // Permit
+                                                                                                                        // callback
+                                                                                                                        // URL
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> {
-                                        oauth2.successHandler(oAuth2LoginSuccessHandler);
+                                        oauth2.loginPage("/oauth2/authorization/google")
+                                                        .defaultSuccessUrl("/user", true); // Redirect to /user after
+                                                                                           // login
                                 });
                 return http.build();
         }
@@ -58,8 +59,17 @@ public class SecurityConfig {
         }
 
         @Bean
-        public OAuth2AuthorizedClientRepository authorizedClientRepository() {
-                return new HttpSessionOAuth2AuthorizedClientRepository();
+        public GoogleAuthorizationCodeFlow googleAuthorizationCodeFlow() {
+                HttpTransport httpTransport = new NetHttpTransport();
+                JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+                return new GoogleAuthorizationCodeFlow.Builder(
+                                httpTransport,
+                                jsonFactory,
+                                "YOUR_CLIENT_ID",
+                                "YOUR_CLIENT_SECRET",
+                                Arrays.asList("https://www.googleapis.com/auth/userinfo.profile",
+                                                "https://www.googleapis.com/auth/userinfo.email"))
+                                .setAccessType("offline")
+                                .build();
         }
-
 }
