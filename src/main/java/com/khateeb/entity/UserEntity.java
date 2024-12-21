@@ -24,4 +24,7 @@ public class UserEntity {
     @Column(length = 500)
     private String accessToken;
 
+    @Column(length = 2048)
+    private String refreshToken;
+
 }

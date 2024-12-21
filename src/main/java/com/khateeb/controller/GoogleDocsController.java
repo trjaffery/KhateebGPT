@@ -7,8 +7,10 @@
 package com.khateeb.controller;
 
 import com.khateeb.entity.UserEntity;
-import com.khateeb.service.UserService;
+import com.khateeb.service.*;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,18 +31,21 @@ public class GoogleDocsController {
 
     private final UserService userService;
 
+    private final GoogleOAuthService googleOAuthService;
+
     @PostMapping("/create")
     public ResponseEntity<?> createGoogleDoc(@RequestBody Map<String, String> requestPayload,
             Authentication authentication) {
         String email = ((DefaultOAuth2User) authentication.getPrincipal()).getAttribute("email");
         String title = requestPayload.getOrDefault("title", "Untitled Document");
 
-        // Retrieve user access token
-        UserEntity user = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        String accessToken = user.getAccessToken();
+        // Get a valid access token (refresh if necessary)
+        String accessToken = googleOAuthService.getValidAccessToken(email);
+
+        // Debugging
         System.out.println("--------------------------");
         System.out.println(accessToken);
+
         // Call Google Docs API
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://docs.googleapis.com/v1/documents";
