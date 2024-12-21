@@ -1,4 +1,9 @@
-// Defines the contract (method signatures) for user-related operations.
+/*
+ * This is the service interface that defines the methods (findByEmail, save, etc.) 
+ * for managing users. UserServiceImpl implements this interface to provide the 
+ * actual business logic for user-related operations.
+
+ */
 
 package com.khateeb.service;
 

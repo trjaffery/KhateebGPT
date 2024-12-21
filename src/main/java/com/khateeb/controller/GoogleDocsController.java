@@ -1,3 +1,9 @@
+/*
+ * This controller interacts with Google Docs API using the user's OAuth2 access token. 
+ * It allows the authenticated user to create Google Docs by leveraging their access token, 
+ * which was fetched during the OAuth2 login flow.
+ */
+
 package com.khateeb.controller;
 
 import com.khateeb.entity.UserEntity;
@@ -17,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/docs")
+@RequestMapping("/docs")
 @RequiredArgsConstructor
 public class GoogleDocsController {
 
@@ -33,7 +39,8 @@ public class GoogleDocsController {
         UserEntity user = userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         String accessToken = user.getAccessToken();
-
+        System.out.println("--------------------------");
+        System.out.println(accessToken);
         // Call Google Docs API
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://docs.googleapis.com/v1/documents";

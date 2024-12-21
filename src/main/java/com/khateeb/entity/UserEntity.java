@@ -1,3 +1,9 @@
+/*
+ * This entity class represents a user in the database. It holds information 
+ * about the user, like their email, name, and possibly the access token. 
+ * It is saved and retrieved via UserEntityRepository.
+ */
+
 package com.khateeb.entity;
 
 import jakarta.persistence.*;

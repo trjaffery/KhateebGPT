@@ -1,3 +1,10 @@
+/*
+ * This service class contains the business logic for managing users. 
+ * It interacts with the UserEntityRepository to find, save, and update 
+ * user information. It is responsible for the core logic in handling 
+ * user-related operations.
+ */
+
 package com.khateeb.service.impl;
 
 import com.khateeb.entity.UserEntity;
